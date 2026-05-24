@@ -1,5 +1,10 @@
 import importlib.util
-spec = importlib.util.spec_from_file_location('Dao_layer','F:\PyCharm Community Edition 2022.3.1\FastAPI_project_demo\CBIDao\Data_addtion_deletion.py')
+import os
+
+extract_dic = list(os.getcwd().split("\\"))
+project_directory = "\\".join(extract_dic[:len(extract_dic)-1])
+
+spec = importlib.util.spec_from_file_location('Dao_layer',f'{project_directory}\CBIDao\Data_addtion_deletion.py')
 Data_addition_deletion = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(Data_addition_deletion)
 

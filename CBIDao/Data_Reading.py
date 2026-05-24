@@ -3,11 +3,14 @@ from firebase_admin import credentials
 from firebase_admin import db
 import os
 
+extract_dic = list(os.getcwd().split("\\"))
+project_directory = '\\'.join(extract_dic[:len(extract_dic)-1])
+
 if not firebase_admin._apps:
     # If it doesn't exist, initialize it normally
-    cred = credentials.Certificate("F:\PyCharm Community Edition 2022.3.1\FastAPI_project_demo\CBIDao\Credentials.json")
+    cred = credentials.Certificate(f"{project_directory}\CBIDao\Credentials.json")
     firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://fastapi-project-9cde0-default-rtdb.firebaseio.com/'  # Replace with your DB URL
+        'databaseURL': 'https://cbi-project-14e33-default-rtdb.firebaseio.com/'  # Replace with your DB URL
     })
 else:
     # If it already exists, just get the existing instance
@@ -28,13 +31,10 @@ def fetch_criminal_profile(profile):
         return e
 
 def get_criminal_name(sample_name):
-    try:
         data = list(db.reference('/').get().keys())
         for letter_divition in data:
             if(sample_name.lower() in letter_divition.lower()):
                 return letter_divition
-    except Exception as e:
-        print("Exception at get_criminal_Name dao layer: ",e)
 
 def get_all_criminal_names():
     try:

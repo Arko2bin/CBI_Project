@@ -1,12 +1,17 @@
+import os
+
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
+extract_dic = list(os.getcwd().split("\\"))
+project_directory = "\\".join(extract_dic[:len(extract_dic)-1])
+
 if not firebase_admin._apps:
     # If it doesn't exist, initialize it normally
-    cred = credentials.Certificate("F:\PyCharm Community Edition 2022.3.1\FastAPI_project_demo\CBIDao\Credentials.json")
+    cred = credentials.Certificate(f"{project_directory}\CBIDao\Credentials.json")
     firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://fastapi-project-9cde0-default-rtdb.firebaseio.com/'  # Replace with your DB URL
+        'databaseURL': 'https://cbi-project-14e33-default-rtdb.firebaseio.com/'  # Replace with your DB URL
     })
 else:
     # If it already exists, just get the existing instance
