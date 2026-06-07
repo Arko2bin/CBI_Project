@@ -14,7 +14,7 @@ else:
 
 if not firebase_admin._apps:
     try:
-        if "mount" in project_directory:
+        if "mount" in str(project_directory):
             import streamlit as st
             # Streamlit automatically converts TOML tables into Python dictionaries!
             firebase_info = dict(st.secrets["firebase_creds"])
