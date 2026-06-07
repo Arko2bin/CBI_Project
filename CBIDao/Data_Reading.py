@@ -66,6 +66,20 @@ def get_all_criminal_names():
     except Exception as e:
         print("Exception at get_criminal_Name dao layer: ",e)
 
+def get_parameters():
+    try:
+        parameters = {}
+        database = list(db.reference('/').get().keys())
+        if(database is not None):
+            database2 = fetch_criminal_profile(database[0])
+            if(database2 is not None):
+                for key,value in database2.items():
+                    parameters[key] = type(value)
+                return parameters
+            else:
+                return {"Error_Message" : "No Parameters found"}
+        else:
+            return {"Error_Message": "Database Empty"}
 
-
-
+    except Exception as e:
+        print("Exception at get_parameters: ",e)

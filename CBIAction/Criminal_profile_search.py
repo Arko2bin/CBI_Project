@@ -157,44 +157,129 @@ with update:
         st.session_state.update_clicked = True
 
 st.subheader("Search Criminal Profile")
-criminal_name = st.text_input("Enter Criminal Name: ")
+criminal_name = st.selectbox("Choose Criminal Name",Data_Reading.get_all_criminal_names())
 if(st.button("Search")):
     search_clicked = True
 
 st.subheader("Seach Criminal Profiles by parameters")
-parameter = st.text_input("Enter criminal parameters like its adress or gender: ")
-if(st.button("search")):
+parameters = Data_Reading.get_parameters()
+select_parameters = st.multiselect("Select all parameters",list(parameters.keys()))
+submit_parameters = {}
+if(select_parameters):
+    for selected in select_parameters:
+        data_type = parameters[selected]
+        if data_type == int:
+            st.markdown(f"**Filter by {selected} (Range):**")
+            col1, col2 = st.columns(2)
+
+            with col1:
+                min_val = st.number_input(f"Min {selected}", value=0, key=f"min_{selected}")
+            with col2:
+                max_val = st.number_input(f"Max {selected}", value=100, key=f"max_{selected}")
+
+            # Store the range as a tuple or sub-dictionary
+            submit_parameters[selected] = {"min": min_val, "max": max_val}
+
+            # Scenario B: If the field is a string/text, create a standard text input
+        else:
+            user_text = st.text_input(f"Enter {selected}:", key=f"text_{selected}")
+            submit_parameters[selected] = user_text
+
+if(st.button("Submit Query")):
     search2_clicked = True
 
-if(search_clicked and criminal_name):
-    profile_details,photo = Search_Profile_Data.search_profile_data(criminal_name)
-    if(profile_details != "No Data"):
-        st.header('Criminal Details Found')
-        st.write("---")
-        if(photo != 'N/A' and photo != ""):
-            st.image(photo)
-        else:
-            st.write("No Image available of this criminal")
-        st.table(profile_details)
-    else:
-        st.write("---")
-        st.header("No Criminal Record Found")
+st.divider()
+#End of UI next will be all results
 
-if(search2_clicked and parameter):
-    profiles = Search_Profile_Data.get_criminal_name_by_parameters(parameter)
-    for elements in list(profiles.keys()):
-        if "Error_Message" in elements:
-            st.write("---")
-            st.header(profiles[elements])
+if(search_clicked and criminal_name):
+    profiles,photo = Search_Profile_Data.search_profile_data(criminal_name)
+    # 1. Check if the function returned an error message
+    if isinstance(profiles, dict) and "Error_Message" in profiles:
+        st.error(profiles["Error_Message"])
+
+    else:
+        st.success("Criminal Profile Found")
+        table_rows = []
+
+        # Create a clean header card for each person
+        st.subheader(f"👤 {profiles['name']}")
+
+        # 3. Handle the Profile Image
+        image_url = profiles['Image']
+
+        if image_url and image_url.strip() != "":
+            try:
+                # Renders the image at a reasonable passport-style width
+                st.image(image_url, width=300)
+            except Exception:
+                # In case the link is broken or restricted
+                st.warning("⚠️ Profile picture URL unreachable.")
         else:
-            st.header('Criminal Details Found')
-            st.write("---")
-            if("No Image" in elements):
-                st.write("No Image available of this criminal")
-                st.table(profiles[elements])
+            # Fallback avatar if no image exists in the database
+            st.image("https://cdn-icons-png.flaticon.com/512/149/149071.png", width=300)
+
+        # Loop through each criminal record dynamically
+        for keys, details in profiles.items():
+
+            if keys not in ["Image", "name"]:
+                # Capitalize keys cleanly for UI readability (e.g., 'money_looted' -> 'Money Looted')
+                clean_key = keys.replace("_", " ").title()
+                table_rows.append([clean_key, details])
+
+            # Display rows natively as a structured table with Keys in Col 1, Values in Col 2
+        st.table(table_rows)
+
+        # Add a clear section divider before rendering the next person
+        st.write("###")
+        st.divider()
+
+if (search2_clicked and submit_parameters):
+    profiles = Search_Profile_Data.get_criminal_name_by_parameters(submit_parameters)
+
+    # 1. Check if the function returned an error message
+    if isinstance(profiles, dict) and "Error_Message" in profiles:
+        st.error(profiles["Error_Message"])
+
+    else:
+        st.success(f"Found {len(profiles)} matching records:")
+        st.write("---")  # Visual separator
+
+        # 2. Loop through each criminal record dynamically
+        for profile_id, details in profiles.items():
+
+            # Create a clean header card for each person
+            st.subheader(f"👤 {details.get('name', profile_id)}")
+
+            # 3. Handle the Profile Image
+            image_url = details.get("Image", "")
+
+            if image_url and image_url.strip() != "":
+                try:
+                    # Renders the image at a reasonable passport-style width
+                    st.image(image_url, width=300)
+                except Exception:
+                    # In case the link is broken or restricted
+                    st.warning("⚠️ Profile picture URL unreachable.")
             else:
-                st.image(elements)
-                st.table(profiles[elements])
+                # Fallback avatar if no image exists in the database
+                st.image("https://cdn-icons-png.flaticon.com/512/149/149071.png", width=300)
+
+            # 4. Format the rest of the details into a Tabular Key-Value view
+            # We filter out 'Image' and 'name' since they are already displayed above
+            table_rows = []
+            for key, value in details.items():
+                if key not in ["Image", "name"]:
+                    # Capitalize keys cleanly for UI readability (e.g., 'money_looted' -> 'Money Looted')
+                    clean_key = key.replace("_", " ").title()
+                    table_rows.append([clean_key, value])
+
+            # Display rows natively as a structured table with Keys in Col 1, Values in Col 2
+            st.table(table_rows)
+
+            # Add a clear section divider before rendering the next person
+            st.write("###")
+            st.divider()
+
 
 if st.session_state.create_clicked:
     create_criminal_profile()
