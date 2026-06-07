@@ -1,15 +1,19 @@
 from fastapi import FastAPI,Path
+from pathlib import Path
 import importlib.util
 import os
 
 extract_dic = list(os.getcwd().split("\\"))
-project_directory = "\\".join(extract_dic[:len(extract_dic)-1])
+project_directory = Path.cwd().parent
 
-spec = importlib.util.spec_from_file_location('Dao_layer',f'{project_directory}\CBIDao\Data_Reading.py')
+Data_Reading_path = project_directory / 'CBIDao' / 'Data_Reading.py'
+Search_Profile_Data_path = project_directory / 'CBIManager' / 'Search_Profile_Data.py'
+
+spec = importlib.util.spec_from_file_location('Dao_layer',str(Data_Reading_path))
 Data_Reading = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(Data_Reading)
 
-spec2 = importlib.util.spec_from_file_location('Manager_layer',f'{project_directory}\CBIManager\Search_Profile_Data.py')
+spec2 = importlib.util.spec_from_file_location('Manager_layer',str(Search_Profile_Data_path))
 Search_Profile_Data = importlib.util.module_from_spec(spec2)
 spec2.loader.exec_module(Search_Profile_Data)
 

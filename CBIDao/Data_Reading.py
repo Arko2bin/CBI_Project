@@ -1,16 +1,15 @@
 import firebase_admin
-
+from pathlib import Path
 from firebase_admin import credentials
 from firebase_admin import db
 import os
 
-extract_dic = list(os.getcwd().split("\\"))
-project_directory = '\\'.join(extract_dic[:len(extract_dic)-1])
+#extract_dic = list(os.getcwd().split("\\"))
+project_directory = Path.cwd().parent
 
 if not firebase_admin._apps:
     try:
-        print(extract_dic)
-        if "mount" in extract_dic:
+        if "mount" in project_directory:
             import streamlit as st
             # Streamlit automatically converts TOML tables into Python dictionaries!
             firebase_info = dict(st.secrets["firebase_creds"])

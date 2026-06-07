@@ -1,23 +1,30 @@
 import streamlit as st
 import importlib.util
+from pathlib import Path
 import os
 
 extract_dic = list(os.getcwd().split("\\"))
-project_directory = "\\".join(extract_dic[:len(extract_dic)-1])
+project_directory = Path.cwd().parent
 
-spec = importlib.util.spec_from_file_location('Manager_layer',f'{project_directory}\CBIManager\Search_Profile_Data.py')
+Search_Profile_Data_path = project_directory / 'CBIManager' / 'Search_Profile_Data.py'
+Create_Profile_Data_path = project_directory / 'CBIManager' / 'Create_Profile_Data.py'
+Delete_Profile_Data_path = project_directory / 'CBIManager' / 'Delete_Profile_Data.py'
+Data_Reading_path = project_directory / 'CBIDao' / 'Data_Reading.py'
+
+
+spec = importlib.util.spec_from_file_location('Manager_layer',str(Search_Profile_Data_path))
 Search_Profile_Data = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(Search_Profile_Data)
 
-spec2 = importlib.util.spec_from_file_location('Manager_layer',f'{project_directory}\CBIManager\Create_Profile_Data.py')
+spec2 = importlib.util.spec_from_file_location('Manager_layer',str(Create_Profile_Data_path))
 Create_Profile_Data = importlib.util.module_from_spec(spec2)
 spec2.loader.exec_module(Create_Profile_Data)
 
-spec3 = importlib.util.spec_from_file_location('Dao_layer',f'{project_directory}\CBIDao\Data_Reading.py')
+spec3 = importlib.util.spec_from_file_location('Dao_layer',str(Data_Reading_path))
 Data_Reading = importlib.util.module_from_spec(spec3)
 spec3.loader.exec_module(Data_Reading)
 
-spec4 = importlib.util.spec_from_file_location('Manager_layer',f'{project_directory}\CBIManager\Delete_Profile_Data.py')
+spec4 = importlib.util.spec_from_file_location('Manager_layer',str(Delete_Profile_Data_path))
 Delete_Profile_Data = importlib.util.module_from_spec(spec4)
 spec4.loader.exec_module(Delete_Profile_Data)
 
