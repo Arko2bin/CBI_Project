@@ -171,7 +171,7 @@ if(search_clicked and criminal_name):
         st.table(profile_details)
     else:
         st.write("---")
-        st.header("No Data Found")
+        st.header("No Criminal Record Found")
 
 if(search2_clicked and parameter):
     profiles = Search_Profile_Data.get_criminal_name_by_parameters(parameter)
