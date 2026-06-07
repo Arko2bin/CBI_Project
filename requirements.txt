@@ -1,4 +1,4 @@
 firebase_admin==6.4.0
 streamlit==1.23.1
-protobuf~=3.19.0
+protobuf<5
 altair<5
