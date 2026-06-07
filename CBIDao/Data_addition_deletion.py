@@ -13,29 +13,31 @@ else:
 
 if not firebase_admin._apps:
     try:
+        # 1. Handle Streamlit Cloud Environment
         if "mount" in str(project_directory):
             import streamlit as st
-            # Streamlit automatically converts TOML tables into Python dictionaries!
             firebase_info = dict(st.secrets["firebase_creds"])
             cred = credentials.Certificate(firebase_info)
             db_url = st.secrets["database"]["url"]
             print("Running on Streamlit Cloud using Secrets.")
-        # If it doesn't exist, initialize it normally
+
+        # 2. Handle Localhost Environment
         else:
             print("System Running in localhost")
-            cred = credentials.Certificate(f"{project_directory}\.gitignore\Credentials.json")
-            firebase_admin.initialize_app(cred, {
-                'databaseURL': 'https://cbi-project-14e33-default-rtdb.firebaseio.com/'  # Replace with your DB URL
-            })
-    except Exception as e:
-        print("System Running is localhost")
-        cred = credentials.Certificate(f"{project_directory}\.gitignore\Credentials.json")
+            # Using the corrected Pathlib forward slash from your previous fix
+            cred = credentials.Certificate(project_directory / '.gitignore' / 'Credentials.json')
+            db_url = 'https://cbi-project-14e33-default-rtdb.firebaseio.com/'
+
+        # 3. CRITICAL: Run the initialization for whichever environment was picked!
         firebase_admin.initialize_app(cred, {
-            'databaseURL': 'https://cbi-project-14e33-default-rtdb.firebaseio.com/'  # Replace with your DB URL
+            'databaseURL': db_url
         })
+
+    except Exception as e:
+        # Fallback security block if initialization fails unexpectedly
+        print(f"Failed to initialize Firebase: {e}")
 else:
-    # If it already exists, just get the existing instance
-    print("Firebase app already initialized. Using existing instance.")
+    # If it already exists, use the existing active instance smoothly
     pass
 
 # Get a reference to the root of your database (or a specific node)
