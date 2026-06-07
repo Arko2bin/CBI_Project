@@ -35,7 +35,7 @@ if not firebase_admin._apps:
         })
 else:
     # If it already exists, just get the existing instance
-    #print("Firebase app already initialized. Using existing instance.")
+    print("Firebase app already initialized. Using existing instance.")
     pass
 
 def fetch_criminal_profile(profile):
