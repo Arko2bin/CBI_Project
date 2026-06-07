@@ -6,9 +6,8 @@ import os
 extract_dic = list(os.getcwd().split("\\"))
 project_directory = Path.cwd().parent
 if('cbi_project' in str(project_directory).lower()):
-    print("Successfully passed if condition on env")
+    pass
 else:
-    print("inside else")
     project_directory = project_directory / 'cbi_project'
 
 Search_Profile_Data_path = project_directory / 'CBIManager' / 'Search_Profile_Data.py'
@@ -144,32 +143,28 @@ if 'delete_clicked' not in st.session_state:
     st.session_state.delete_clicked = False
 if 'update_clicked' not in st.session_state:
     st.session_state.update_clicked = False
-cud,r,r2 = st.columns(3)
-with cud:
-    st.subheader("Create, Update, Delete Criminal Profile: ")
-    create,update,delete = st.columns(3)
-    with create:
-        if st.button("Create Criminal Profile"):
-            st.session_state.create_clicked = True
-    with delete:
-        if st.button("Delete Criminal Profile"):
-            st.session_state.delete_clicked = True
-    with update:
-        if(st.button("Update Criminal Profile")):
-            st.session_state.update_clicked = True
 
+st.subheader("Create, Update, Delete Criminal Profile: ")
+create,update,delete = st.columns(3)
+with create:
+    if st.button("Create Criminal Profile"):
+        st.session_state.create_clicked = True
+with delete:
+    if st.button("Delete Criminal Profile"):
+        st.session_state.delete_clicked = True
+with update:
+    if(st.button("Update Criminal Profile")):
+        st.session_state.update_clicked = True
 
-with r:
-    st.subheader("Search Criminal Profile")
-    criminal_name = st.text_input("Enter Criminal Name: ")
-    if(st.button("Search")):
-        search_clicked = True
+st.subheader("Search Criminal Profile")
+criminal_name = st.text_input("Enter Criminal Name: ")
+if(st.button("Search")):
+    search_clicked = True
 
-with r2:
-    st.subheader("Seach Criminal Profiles by parameters")
-    parameter = st.text_input("Enter criminal parameters like its adress or gender: ")
-    if(st.button("search")):
-        search2_clicked = True
+st.subheader("Seach Criminal Profiles by parameters")
+parameter = st.text_input("Enter criminal parameters like its adress or gender: ")
+if(st.button("search")):
+    search2_clicked = True
 
 if(search_clicked and criminal_name):
     profile_details,photo = Search_Profile_Data.search_profile_data(criminal_name)

@@ -7,9 +7,8 @@ from pathlib import Path
 #extract_dic = list(os.getcwd().split("\\"))
 project_directory = Path.cwd().parent
 if('cbi_project' in str(project_directory).lower()):
-    print("Successfully passed if condition on env")
+    pass
 else:
-    print("inside else")
     project_directory = project_directory / 'cbi_project'
 
 if not firebase_admin._apps:

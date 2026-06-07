@@ -5,9 +5,8 @@ import os
 #extract_dic = list(os.getcwd().split("\\"))
 project_directory = Path.cwd().parent
 if('cbi_project' in str(project_directory).lower()):
-    print("Successfully passed if condition on env")
+    pass
 else:
-    print("inside else")
     project_directory = project_directory / 'cbi_project'
 
 Data_Reading_path = project_directory / 'CBIDao' / 'Data_Reading.py'
